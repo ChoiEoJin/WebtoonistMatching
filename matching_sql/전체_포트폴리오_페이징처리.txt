@@ -1,0 +1,85 @@
+﻿/*
+총필요한 페이지갯수구하기
+*/
+
+//준비물: 조회된 데이터들의 총갯수 , 조건에따라 where절 유무
+	pool.query('select count(*) as RowsCNT from tb_portfolio',function(err,data,fields){ //특정SQL문 부분 01
+		var RowsCount = data[0].RowsCNT ; // 총 조회된 데이터들의 갯수
+
+		var pageSize = 10; //한페이지에 몇개실을것인가
+		var tmp_Quota = RowsCount/pageSize; //몫
+		var tmp_Rest = RowsCount%pageSize; //나머지
+
+		var totalPage = ((tmp_Rest  == 0)? tmp_Quota : (tmp_Quota + 1)); //총 필요한 페이지수
+
+		var startPage,curPage,endPage,; //시작페이지,현재페이지,끝페이지
+		var Distance=10; //start페이지와 end페이지의 간격을 몇으로할것인가
+
+		var objPage = req.body.objPage;// vue에서 넘어온 페이지객체(현재페이지넘버, 그외에 검색옵션 )
+		curPage = objPage.curPage; //현재페이지 설정
+
+		var tmp2_Quota = curPage/Distance; //현재페이지를 기준으로 몫계산
+		var tmp2_Rest = cutPage%Distance; //현재페이지를 기준으로 몫계산
+
+		//startPage,endPage 설정단계
+		if(tmp2_Rest == 0){
+			startPage = Distance *(tmp2_Quota -1 )+1;
+			if(endPage == totalPage){
+				endPage= totalPage;
+			}else{
+				endPage=Distance*tmp2_Quota;
+			}
+		}else{
+			startPage= Distance*tmp2_Quota+1;
+			if(endPage == totalPage){
+				endPage= totalPage;
+			}else{
+				endPage=Distance*(tmp2_Quota+1);
+			}
+		}
+
+		/*
+			페이지변수 확인단계		
+		*/
+		console.log('curPage : ',curPage);
+		console.log('startPage : ',startPage);
+		console.log('endPage : ',endPage);
+		console.log('totalPage : ',totalPage);
+
+		/*
+			페이지별 리스트(로우)처리단계
+		*/
+
+		var start_row_num = pageSize*(curPage-1)+1;
+		var end_row_num = pageSize*curPage;
+
+		//특정SQL문 부분 02
+		var sql = `
+
+			set @start_row_num=${start_row_num};
+			set @end_row_num=${end_row_num};
+		
+			SELECT  rownum,
+					po_number,
+					po_title,
+					created
+			FROM
+				(select @row_num:=@row_num+1 as rownum,
+				po_number,po_title,created
+				from tb_portfolio
+				join (select @row_num:=0) as tmp
+				order by created desc) sub1
+			WHERE rownum between @start_row_num and @end_row_num;		
+		`;
+		pool.query(sql,function(err,rows,fields){
+			if(err) throw err;
+
+			var PageObject ={};
+			PageObject['startPage']=startPage;
+			PageObject['endPage']=endPage;
+			PageObject['totalPage']=totalPage;
+			PageObject['rows']=rows;
+			res.send(PageObject);
+		});
+	}); //pool.query끝(페이지처리,로우처리)
+

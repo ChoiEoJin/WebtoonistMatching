@@ -1,0 +1,63 @@
+﻿
+■ result를 담는데 굳이 동기일필요가있는가?
+
+result에담는건 비동기식으로 하고, 다만 모두 작업이 끝났을때에만,  동기식으로 넘어갈수있게만하면되지않을까?
+
+
+
+
+
+result{
+
+    result1 = {
+        'search_gen_number':value,
+        'value':value 
+        },
+
+    result2 = {
+            'search_gen_number': search_gen_number,
+                'value': 0
+        },
+            
+
+    result3 = { 'search_gen_number': value,
+            'gen_name':value,
+            'MaleClickerRatio': value,
+            'FemaleClickerRatio': value,
+            'DrawingClickerRatio':value,
+            'StoryClickerRatio':value,		 
+        },
+
+    result4 = {
+            'search_gen_number': search_gen_number,
+                    'seoul': 0,
+                    'gyeonggi': 0,
+                    'incheon': 0,
+                    'gangwon': 0,
+                    'chungnam': 0,
+                    'daejeon': 0,
+                    'chungbuk': 0,
+                    'sejong': 0,
+            'busan': 0,
+            'ulsan': 0,
+            'daegu': 0,
+            'gyeongbuk': 0,
+            'gyeongnam': 0,
+            'jeonnam': 0,
+            'gwangju': 0,
+            'jeonbuk': 0,
+            'jeju': 0
+        },
+
+    result5 = {
+            [
+            {'VISITED_PO_NUMBER':value,'rank':value},
+            {'VISITED_PO_NUMBER':value,'rank':value},
+            {'VISITED_PO_NUMBER':value,'rank':value},
+                {'VISITED_PO_NUMBER':value,'rank':value}
+            ]
+            }
+ 
+}
+
+
